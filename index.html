@@ -1,68 +1,246 @@
-<!-- REEMPLAZA COMPLETAMENTE TU FUNCIÓN guardarPostulante() POR ESTA -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ginita Fruits - Postulación</title>
+
+<style>
+body{
+    font-family: Arial;
+    background:#f4f4f4;
+    margin:0;
+    padding:0;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+h1{
+    color:#1f7a1f;
+}
+
+input, textarea, select{
+    width:100%;
+    padding:12px;
+    margin-top:8px;
+    margin-bottom:15px;
+    border-radius:10px;
+    border:1px solid #ccc;
+}
+
+button{
+    background:#1f7a1f;
+    color:white;
+    border:none;
+    padding:15px;
+    border-radius:10px;
+    width:100%;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#145214;
+}
+
+.resultado{
+    display:none;
+    background:#d4edda;
+    padding:15px;
+    border-radius:10px;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+<h1>Postulación - Ginita Fruits</h1>
+
+<form id="formulario">
+
+<label>Nombre completo</label>
+<input type="text" id="nombre" required>
+
+<label>Edad</label>
+<input type="number" id="edad" required>
+
+<label>Teléfono</label>
+<input type="text" id="telefono" required>
+
+<label>Sector donde vive</label>
+<input type="text" id="sector" required>
+
+<label>Horario</label>
+<select id="horario">
+<option>Tiempo completo: 8am - 9pm</option>
+<option>Medio tiempo mañana: 8am - 2pm</option>
+<option>Medio tiempo tarde: 2pm - 9pm</option>
+</select>
+
+<label>Experiencia</label>
+<select id="experiencia">
+<option>No tiene experiencia</option>
+<option>Atención al cliente</option>
+<option>Ventas</option>
+<option>Comisariato / tienda</option>
+<option>Caja / cobros</option>
+</select>
+
+<h2>Preguntas</h2>
+
+<label>¿Qué harías con un cliente molesto?</label>
+<textarea id="p1"></textarea>
+
+<label>¿Qué harías si encuentras dinero?</label>
+<textarea id="p2"></textarea>
+
+<label>¿Cómo resolverías problemas bajo presión?</label>
+<textarea id="p3"></textarea>
+
+<label>¿Por qué quieres trabajar aquí?</label>
+<textarea id="p4"></textarea>
+
+<label>¿Qué idea darías para vender más?</label>
+<textarea id="p5"></textarea>
+
+<h2>Actividad matemática</h2>
+
+<p>
+2.50 + 1.75 + 3.25 + 4.50 = ?
+Si el cliente paga con $20 cuánto cambio recibe?
+</p>
+
+<input type="text" id="a1">
+
+<button type="submit">Enviar postulación</button>
+
+</form>
+
+<div class="resultado" id="resultado">
+Postulación enviada correctamente.
+</div>
+
+</div>
+
+</div>
 
 <script>
 
-async function guardarPostulante() {
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRJ-0jO0ZCTlICE183h8D9RRf-I-iZNTdFu7IV0jYeSdSB-S28oXuAyKtV_SiHPqCraQ/exec";
 
-  const calculo = calcularAutomatico();
+function calcularPuntaje(){
 
-  const puntaje = calculo.total;
+    let puntos = 0;
 
-  const postulante = {
+    const respuestas = [
+        document.getElementById("p1").value.toLowerCase(),
+        document.getElementById("p2").value.toLowerCase(),
+        document.getElementById("p3").value.toLowerCase(),
+        document.getElementById("p4").value.toLowerCase(),
+        document.getElementById("p5").value.toLowerCase()
+    ];
 
-    nombre: document.getElementById("nombre").value,
-    edad: document.getElementById("edad").value,
-    telefono: document.getElementById("telefono").value,
-    sector: document.getElementById("sector").value,
-    horario: document.getElementById("horario").value,
-    experiencia: document.getElementById("experiencia").value,
+    respuestas.forEach(r => {
 
-    p1: document.getElementById("p1").value,
-    p2: document.getElementById("p2").value,
-    p3: document.getElementById("p3").value,
-    p4: document.getElementById("p4").value,
-    p5: document.getElementById("p5").value,
-
-    a1: document.getElementById("a1").value,
-    a2: document.getElementById("a2").value,
-    a3: document.getElementById("a3").value,
-    a4: document.getElementById("a4").value,
-    a5: document.getElementById("a5").value,
-
-    puntaje: puntaje,
-
-    estado: obtenerEstado(puntaje),
-
-    fecha: new Date().toLocaleString()
-
-  };
-
-  try {
-
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
-
-      method: "POST",
-
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8"
-      },
-
-      body: JSON.stringify(postulante)
+        if(r.includes("cliente")) puntos += 10;
+        if(r.includes("ayudar")) puntos += 10;
+        if(r.includes("honesto")) puntos += 10;
+        if(r.includes("responsable")) puntos += 10;
+        if(r.includes("solucion")) puntos += 10;
 
     });
 
-    document.getElementById("resultado").style.display = "block";
+    const cambio = document.getElementById("a1").value;
 
-    document.getElementById("formPostulacion").reset();
+    if(cambio.includes("8")) puntos += 20;
 
-  } catch(error) {
+    if(puntos > 100) puntos = 100;
 
-    console.log(error);
-
-    alert("Error enviando formulario");
-
-  }
-
+    return puntos;
 }
 
+function obtenerEstado(p){
+
+    if(p >= 85) return "CONTACTAR PRIMERO";
+    if(p >= 70) return "BUENA OPCIÓN";
+    if(p >= 50) return "REVISAR";
+
+    return "NO RECOMENDADO";
+}
+
+document.getElementById("formulario").addEventListener("submit", async function(e){
+
+    e.preventDefault();
+
+    const puntaje = calcularPuntaje();
+
+    const data = {
+
+        nombre: document.getElementById("nombre").value,
+        edad: document.getElementById("edad").value,
+        telefono: document.getElementById("telefono").value,
+        sector: document.getElementById("sector").value,
+        horario: document.getElementById("horario").value,
+        experiencia: document.getElementById("experiencia").value,
+
+        p1: document.getElementById("p1").value,
+        p2: document.getElementById("p2").value,
+        p3: document.getElementById("p3").value,
+        p4: document.getElementById("p4").value,
+        p5: document.getElementById("p5").value,
+
+        a1: document.getElementById("a1").value,
+
+        puntaje: puntaje,
+        estado: obtenerEstado(puntaje),
+        fecha: new Date().toLocaleString()
+
+    };
+
+    try{
+
+        await fetch(GOOGLE_SCRIPT_URL, {
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"text/plain;charset=utf-8"
+            },
+
+            body: JSON.stringify(data)
+
+        });
+
+        document.getElementById("resultado").style.display = "block";
+
+        document.getElementById("formulario").reset();
+
+    }catch(error){
+
+        alert("Error enviando formulario");
+        console.log(error);
+
+    }
+
+});
+
 </script>
+
+</body>
+</html>
