@@ -1,246 +1,542 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ginita Fruits - Postulación</title>
-
-<style>
-body{
-    font-family: Arial;
-    background:#f4f4f4;
-    margin:0;
-    padding:0;
-}
-
-.container{
-    max-width:900px;
-    margin:auto;
-    padding:20px;
-}
-
-.card{
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    margin-bottom:20px;
-    box-shadow:0 5px 15px rgba(0,0,0,.1);
-}
-
-h1{
-    color:#1f7a1f;
-}
-
-input, textarea, select{
-    width:100%;
-    padding:12px;
-    margin-top:8px;
-    margin-bottom:15px;
-    border-radius:10px;
-    border:1px solid #ccc;
-}
-
-button{
-    background:#1f7a1f;
-    color:white;
-    border:none;
-    padding:15px;
-    border-radius:10px;
-    width:100%;
-    font-size:16px;
-    cursor:pointer;
-}
-
-button:hover{
-    background:#145214;
-}
-
-.resultado{
-    display:none;
-    background:#d4edda;
-    padding:15px;
-    border-radius:10px;
-    margin-top:20px;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ginita Fruits - Postulación Inteligente</title>
+  <style>
+    :root{
+      --green:#2f9e44;
+      --dark:#0b3d20;
+      --light:#f3fff4;
+      --red:#e03131;
+      --orange:#f08c00;
+      --black:#151515;
+      --gray:#f6f7f6;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:linear-gradient(135deg,#f5fff5,#ffffff);
+      color:var(--black);
+    }
+    header{
+      background:linear-gradient(135deg,#0b3d20,#2f9e44);
+      color:white;
+      text-align:center;
+      padding:32px 16px;
+      border-bottom:6px solid #e03131;
+    }
+    .logo{
+      width:90px;height:90px;border-radius:50%;
+      background:white;color:#2f9e44;
+      display:flex;align-items:center;justify-content:center;
+      font-size:28px;font-weight:900;margin:0 auto 12px;
+      cursor:pointer;user-select:none;box-shadow:0 10px 25px rgba(0,0,0,.25);
+    }
+    header h1{margin:0;font-size:34px}
+    header p{margin:8px 0 0;font-size:16px}
+    .container{max-width:1050px;margin:auto;padding:22px}
+    .card{
+      background:white;
+      padding:24px;
+      border-radius:20px;
+      margin-bottom:22px;
+      box-shadow:0 10px 28px rgba(0,0,0,.08);
+      border:1px solid #e6e6e6;
+    }
+    h2{margin-top:0;color:var(--dark)}
+    h3{color:var(--red);margin-bottom:8px}
+    .intro{
+      background:#fff8e8;
+      border-left:6px solid var(--orange);
+    }
+    label{font-weight:bold;display:block;margin-top:14px}
+    input,select,textarea{
+      width:100%;
+      padding:13px;
+      margin-top:7px;
+      border:1px solid #ccc;
+      border-radius:12px;
+      font-size:15px;
+      background:white;
+    }
+    textarea{min-height:105px;resize:vertical}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    .question{
+      background:#f7fff7;
+      padding:16px;
+      border-radius:15px;
+      border-left:6px solid var(--green);
+      margin:14px 0;
+    }
+    .activity{
+      background:#fffdf5;
+      padding:16px;
+      border-radius:15px;
+      border-left:6px solid var(--orange);
+      margin:14px 0;
+    }
+    button{
+      width:100%;
+      background:var(--red);
+      color:white;
+      border:none;
+      padding:16px;
+      border-radius:14px;
+      font-size:17px;
+      font-weight:bold;
+      cursor:pointer;
+      margin-top:12px;
+    }
+    button:hover{filter:brightness(.95)}
+    .secondary{background:var(--green)}
+    .darkbtn{background:#222}
+    .success{
+      display:none;
+      background:#d3f9d8;
+      border:2px solid #69db7c;
+      padding:18px;
+      border-radius:15px;
+      margin-top:18px;
+      font-weight:bold;
+    }
+    .small{font-size:13px;color:#555}
+    .login-box{
+      display:none;
+      position:fixed;inset:0;
+      background:rgba(0,0,0,.55);
+      z-index:50;
+      align-items:center;justify-content:center;
+      padding:20px;
+    }
+    .login-card{
+      background:white;
+      max-width:420px;width:100%;
+      border-radius:20px;
+      padding:24px;
+      box-shadow:0 15px 40px rgba(0,0,0,.25);
+    }
+    .admin-panel{display:none}
+    table{width:100%;border-collapse:collapse;margin-top:14px}
+    th,td{border:1px solid #ddd;padding:10px;text-align:left;vertical-align:top}
+    th{background:var(--dark);color:white}
+    .badge{display:inline-block;padding:7px 11px;border-radius:999px;color:white;font-weight:bold}
+    .good{background:var(--green)}
+    .mid{background:var(--orange)}
+    .bad{background:var(--red)}
+    @media(max-width:760px){
+      .grid{grid-template-columns:1fr}
+      header h1{font-size:26px}
+    }
+  </style>
 </head>
 
 <body>
+<header>
+  <div class="logo" id="logoAdmin">GF</div>
+  <h1>Ginita Fruits</h1>
+  <p>Postulación para trabajar en nuestro comisariato</p>
+</header>
+
+<div class="login-box" id="loginBox">
+  <div class="login-card">
+    <h2>Panel administrador</h2>
+    <label>Usuario</label>
+    <input id="adminUser">
+    <label>Contraseña</label>
+    <input id="adminPass" type="password">
+    <button onclick="loginAdmin()">Ingresar</button>
+    <button class="darkbtn" onclick="cerrarLogin()">Cancelar</button>
+    <p id="loginError" style="color:#e03131;font-weight:bold"></p>
+  </div>
+</div>
 
 <div class="container">
 
-<div class="card">
-<h1>Postulación - Ginita Fruits</h1>
+  <form id="formulario">
 
-<form id="formulario">
+    <div class="card intro">
+      <h2>Antes de empezar</h2>
+      <p>Queremos conocer tu forma de pensar, tu actitud y cómo resolverías situaciones reales en el trabajo.</p>
+      <p class="small">Responde con sinceridad. Las mejores respuestas no son las más largas, sino las más claras, responsables y honestas.</p>
+    </div>
 
-<label>Nombre completo</label>
-<input type="text" id="nombre" required>
+    <div class="card">
+      <h2>1. Datos personales</h2>
+      <div class="grid">
+        <div>
+          <label>Nombre completo</label>
+          <input id="nombre" required>
+        </div>
+        <div>
+          <label>Edad</label>
+          <input id="edad" type="number" required>
+        </div>
+        <div>
+          <label>Teléfono / WhatsApp</label>
+          <input id="telefono" required>
+        </div>
+        <div>
+          <label>Sector donde vive</label>
+          <input id="sector" required>
+        </div>
+        <div>
+          <label>Horario al que aplica</label>
+          <select id="horario">
+            <option>Tiempo completo: 8am - 9pm</option>
+            <option>Medio tiempo mañana: 8am - 2pm</option>
+            <option>Medio tiempo tarde: 2pm - 9pm</option>
+          </select>
+        </div>
+        <div>
+          <label>Experiencia previa</label>
+          <select id="experiencia">
+            <option>No tiene experiencia</option>
+            <option>Atención al cliente</option>
+            <option>Ventas</option>
+            <option>Comisariato / tienda</option>
+            <option>Caja / cobros</option>
+          </select>
+        </div>
+      </div>
+    </div>
 
-<label>Edad</label>
-<input type="number" id="edad" required>
+    <div class="card">
+      <h2>2. Preguntas para pensar</h2>
 
-<label>Teléfono</label>
-<input type="text" id="telefono" required>
+      <div class="question">
+        <h3>Situación 1: Cliente molesto</h3>
+        <label>Un cliente reclama porque compró fruta dañada y está enojado. ¿Qué harías paso a paso para resolverlo?</label>
+        <textarea id="p1" required></textarea>
+      </div>
 
-<label>Sector donde vive</label>
-<input type="text" id="sector" required>
+      <div class="question">
+        <h3>Situación 2: Honestidad</h3>
+        <label>Ves que un compañero se equivoca dando cambio a favor del local y el cliente no se da cuenta. ¿Qué haces y por qué?</label>
+        <textarea id="p2" required></textarea>
+      </div>
 
-<label>Horario</label>
-<select id="horario">
-<option>Tiempo completo: 8am - 9pm</option>
-<option>Medio tiempo mañana: 8am - 2pm</option>
-<option>Medio tiempo tarde: 2pm - 9pm</option>
-</select>
+      <div class="question">
+        <h3>Situación 3: Prioridades</h3>
+        <label>El local está lleno, un cliente pide ayuda, hay agua en el piso, falta ordenar mercadería y suena el teléfono. ¿Qué haces primero, segundo y tercero?</label>
+        <textarea id="p3" required></textarea>
+      </div>
 
-<label>Experiencia</label>
-<select id="experiencia">
-<option>No tiene experiencia</option>
-<option>Atención al cliente</option>
-<option>Ventas</option>
-<option>Comisariato / tienda</option>
-<option>Caja / cobros</option>
-</select>
+      <div class="question">
+        <h3>Situación 4: Trabajo sin supervisión</h3>
+        <label>Si tu jefe no está mirando, ¿qué cosas harías igual para demostrar que eres responsable?</label>
+        <textarea id="p4" required></textarea>
+      </div>
 
-<h2>Preguntas</h2>
+      <div class="question">
+        <h3>Situación 5: Inteligencia para vender</h3>
+        <label>Si notas que una fruta no se está vendiendo mucho, ¿qué idea darías para venderla antes de que se dañe?</label>
+        <textarea id="p5" required></textarea>
+      </div>
 
-<label>¿Qué harías con un cliente molesto?</label>
-<textarea id="p1"></textarea>
+      <div class="question">
+        <h3>Situación 6: Aprendizaje</h3>
+        <label>Si te equivocas en tu primer día de trabajo, ¿cómo reaccionas y qué harías para no repetir el error?</label>
+        <textarea id="p6" required></textarea>
+      </div>
+    </div>
 
-<label>¿Qué harías si encuentras dinero?</label>
-<textarea id="p2"></textarea>
+    <div class="card">
+      <h2>3. Actividades prácticas</h2>
 
-<label>¿Cómo resolverías problemas bajo presión?</label>
-<textarea id="p3"></textarea>
+      <div class="activity">
+        <h3>Actividad 1: Matemática rápida</h3>
+        <p>Un cliente compra: $2.50 de tomate, $1.75 de cebolla, $3.25 de manzana y $4.50 de sandía. Paga con $20.</p>
+        <label>¿Cuánto cambio debe recibir?</label>
+        <input id="a1" required>
+      </div>
 
-<label>¿Por qué quieres trabajar aquí?</label>
-<textarea id="p4"></textarea>
+      <div class="activity">
+        <h3>Actividad 2: Venta</h3>
+        <label>Escribe un mensaje corto para convencer a un cliente de comprar frutas frescas en Ginita Fruits.</label>
+        <textarea id="a2" required></textarea>
+      </div>
 
-<label>¿Qué idea darías para vender más?</label>
-<textarea id="p5"></textarea>
+      <div class="activity">
+        <h3>Actividad 3: Resolución rápida</h3>
+        <label>Un cliente quiere aguacates maduros para hoy, pero solo hay verdes. ¿Qué alternativa le ofreces?</label>
+        <textarea id="a3" required></textarea>
+      </div>
 
-<h2>Actividad matemática</h2>
+      <div class="activity">
+        <h3>Actividad 4: Orden</h3>
+        <label>Si recibes una caja con frutas mezcladas, algunas buenas y algunas golpeadas, ¿cómo las organizarías?</label>
+        <textarea id="a4" required></textarea>
+      </div>
+    </div>
 
-<p>
-2.50 + 1.75 + 3.25 + 4.50 = ?
-Si el cliente paga con $20 cuánto cambio recibe?
-</p>
+    <div class="card">
+      <h2>4. Enviar postulación</h2>
+      <p>Al enviar, tu información será revisada. Si eres seleccionado, te contactaremos.</p>
+      <button id="btnEnviar" type="submit">Enviar postulación</button>
+      <div id="resultado" class="success">Postulación enviada correctamente. Gracias por aplicar.</div>
+    </div>
 
-<input type="text" id="a1">
+  </form>
 
-<button type="submit">Enviar postulación</button>
-
-</form>
-
-<div class="resultado" id="resultado">
-Postulación enviada correctamente.
-</div>
-
-</div>
+  <div class="card admin-panel" id="adminPanel">
+    <h2>Panel privado de administrador</h2>
+    <p>Ranking de postulantes guardados en Google Sheets.</p>
+    <button class="secondary" onclick="cargarPostulantes()">Cargar postulantes</button>
+    <button class="darkbtn" onclick="cerrarAdmin()">Cerrar sesión</button>
+    <div id="ranking"></div>
+    <div id="detalle" class="success"></div>
+  </div>
 
 </div>
 
 <script>
-
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRJ-0jO0ZCTlICE183h8D9RRf-I-iZNTdFu7IV0jYeSdSB-S28oXuAyKtV_SiHPqCraQ/exec";
+const ADMIN_USER = "bryan";
+const ADMIN_PASS = "2004";
+let clickCount = 0;
+let postulantes = [];
 
-function calcularPuntaje(){
-
-    let puntos = 0;
-
-    const respuestas = [
-        document.getElementById("p1").value.toLowerCase(),
-        document.getElementById("p2").value.toLowerCase(),
-        document.getElementById("p3").value.toLowerCase(),
-        document.getElementById("p4").value.toLowerCase(),
-        document.getElementById("p5").value.toLowerCase()
-    ];
-
-    respuestas.forEach(r => {
-
-        if(r.includes("cliente")) puntos += 10;
-        if(r.includes("ayudar")) puntos += 10;
-        if(r.includes("honesto")) puntos += 10;
-        if(r.includes("responsable")) puntos += 10;
-        if(r.includes("solucion")) puntos += 10;
-
-    });
-
-    const cambio = document.getElementById("a1").value;
-
-    if(cambio.includes("8")) puntos += 20;
-
-    if(puntos > 100) puntos = 100;
-
-    return puntos;
-}
-
-function obtenerEstado(p){
-
-    if(p >= 85) return "CONTACTAR PRIMERO";
-    if(p >= 70) return "BUENA OPCIÓN";
-    if(p >= 50) return "REVISAR";
-
-    return "NO RECOMENDADO";
-}
-
-document.getElementById("formulario").addEventListener("submit", async function(e){
-
-    e.preventDefault();
-
-    const puntaje = calcularPuntaje();
-
-    const data = {
-
-        nombre: document.getElementById("nombre").value,
-        edad: document.getElementById("edad").value,
-        telefono: document.getElementById("telefono").value,
-        sector: document.getElementById("sector").value,
-        horario: document.getElementById("horario").value,
-        experiencia: document.getElementById("experiencia").value,
-
-        p1: document.getElementById("p1").value,
-        p2: document.getElementById("p2").value,
-        p3: document.getElementById("p3").value,
-        p4: document.getElementById("p4").value,
-        p5: document.getElementById("p5").value,
-
-        a1: document.getElementById("a1").value,
-
-        puntaje: puntaje,
-        estado: obtenerEstado(puntaje),
-        fecha: new Date().toLocaleString()
-
-    };
-
-    try{
-
-        await fetch(GOOGLE_SCRIPT_URL, {
-
-            method:"POST",
-
-            headers:{
-                "Content-Type":"text/plain;charset=utf-8"
-            },
-
-            body: JSON.stringify(data)
-
-        });
-
-        document.getElementById("resultado").style.display = "block";
-
-        document.getElementById("formulario").reset();
-
-    }catch(error){
-
-        alert("Error enviando formulario");
-        console.log(error);
-
-    }
-
+document.getElementById("logoAdmin").addEventListener("click", () => {
+  clickCount++;
+  setTimeout(() => clickCount = 0, 1500);
+  if(clickCount >= 5){
+    clickCount = 0;
+    document.getElementById("loginBox").style.display = "flex";
+  }
 });
 
-</script>
+function cerrarLogin(){
+  document.getElementById("loginBox").style.display = "none";
+}
 
+function loginAdmin(){
+  const u = document.getElementById("adminUser").value.trim();
+  const p = document.getElementById("adminPass").value.trim();
+
+  if(u === ADMIN_USER && p === ADMIN_PASS){
+    localStorage.setItem("adminGinita","true");
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("adminPanel").style.display = "block";
+    cargarPostulantes();
+  } else {
+    document.getElementById("loginError").innerText = "Usuario o contraseña incorrectos";
+  }
+}
+
+function cerrarAdmin(){
+  localStorage.removeItem("adminGinita");
+  document.getElementById("adminPanel").style.display = "none";
+}
+
+function limpiarTexto(t){
+  return String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+}
+
+function puntos(texto, buenas, malas){
+  let t = limpiarTexto(texto);
+  let p = 0;
+
+  buenas.forEach(w => {
+    if(t.includes(w)) p += 2;
+  });
+
+  malas.forEach(w => {
+    if(t.includes(w)) p -= 4;
+  });
+
+  if(t.length > 70) p += 2;
+  if(t.length > 150) p += 2;
+  if(t.length < 25) p -= 3;
+
+  return Math.max(0, Math.min(10, p));
+}
+
+function calcularPuntaje(){
+  const p1 = document.getElementById("p1").value;
+  const p2 = document.getElementById("p2").value;
+  const p3 = document.getElementById("p3").value;
+  const p4 = document.getElementById("p4").value;
+  const p5 = document.getElementById("p5").value;
+  const p6 = document.getElementById("p6").value;
+  const a1 = document.getElementById("a1").value;
+  const a2 = document.getElementById("a2").value;
+  const a3 = document.getElementById("a3").value;
+  const a4 = document.getElementById("a4").value;
+
+  const atencion = puntos(p1 + " " + a2,
+    ["escuchar","calma","disculpa","solucion","cambiar","ayudar","amable","respeto","cliente","ofrecer","gracias"],
+    ["pelear","gritar","ignorar","culpa","no es mi problema"]
+  );
+
+  const honestidad = puntos(p2,
+    ["avisar","corregir","cliente","honesto","verdad","devolver","encargado","jefe","explicar"],
+    ["callado","no digo","me quedo","oculto","nadie se da cuenta"]
+  );
+
+  const razonamiento = puntos(p3 + " " + a3,
+    ["primero","seguridad","agua","piso","cliente","prioridad","orden","avisar","alternativa","solucion","recomendar"],
+    ["no se","nada","esperar","ignorar"]
+  );
+
+  const responsabilidad = puntos(p4 + " " + p6,
+    ["puntual","limpiar","ordenar","cumplir","responsable","aprender","mejorar","preguntar","corregir","trabajar"],
+    ["celular","solo si mira","no hago","me da igual"]
+  );
+
+  const venta = puntos(p5 + " " + a2,
+    ["promocion","oferta","combo","redes","mostrar","recomendar","calidad","fresco","precio","cliente","vender"],
+    ["no se","nada"]
+  );
+
+  const orden = puntos(a4,
+    ["separar","buenas","golpeadas","dañadas","ordenar","limpiar","clasificar","revisar","maduras","verdes"],
+    ["mezclar","botar todo","no se"]
+  );
+
+  let matematica = 0;
+  let r = limpiarTexto(a1).replace(",",".");
+  let m = r.match(/\d+(\.\d+)?/);
+  if(m){
+    let num = parseFloat(m[0]);
+    matematica = Math.abs(num - 8) < 0.05 ? 10 : Math.max(0, 10 - Math.round(Math.abs(num - 8) * 2));
+  }
+
+  let exp = 3;
+  const experiencia = document.getElementById("experiencia").value;
+  if(experiencia !== "No tiene experiencia") exp = 7;
+  if(experiencia.includes("Comisariato") || experiencia.includes("Caja")) exp = 10;
+
+  let total = Math.round(
+    (atencion*0.17 + honestidad*0.20 + razonamiento*0.20 + responsabilidad*0.16 + venta*0.10 + orden*0.07 + matematica*0.07 + exp*0.03) * 10
+  );
+
+  return Math.max(0, Math.min(100,total));
+}
+
+function estado(p){
+  if(p >= 85) return "CONTACTAR PRIMERO";
+  if(p >= 70) return "BUENA OPCIÓN";
+  if(p >= 50) return "REVISAR";
+  return "NO RECOMENDADO";
+}
+
+document.getElementById("formulario").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const puntaje = calcularPuntaje();
+
+  const data = {
+    fecha:new Date().toLocaleString(),
+    nombre:document.getElementById("nombre").value,
+    edad:document.getElementById("edad").value,
+    telefono:document.getElementById("telefono").value,
+    sector:document.getElementById("sector").value,
+    horario:document.getElementById("horario").value,
+    experiencia:document.getElementById("experiencia").value,
+    puntaje:puntaje,
+    estado:estado(puntaje),
+    p1:document.getElementById("p1").value,
+    p2:document.getElementById("p2").value,
+    p3:document.getElementById("p3").value,
+    p4:document.getElementById("p4").value,
+    p5:document.getElementById("p5").value,
+    p6:document.getElementById("p6").value,
+    a1:document.getElementById("a1").value,
+    a2:document.getElementById("a2").value,
+    a3:document.getElementById("a3").value,
+    a4:document.getElementById("a4").value
+  };
+
+  const btn = document.getElementById("btnEnviar");
+  btn.disabled = true;
+  btn.innerText = "Enviando...";
+
+  try{
+    await fetch(GOOGLE_SCRIPT_URL,{
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(data)
+    });
+
+    document.getElementById("resultado").style.display = "block";
+    document.getElementById("formulario").reset();
+  }catch(err){
+    alert("No se pudo enviar. Revisa la conexión o Apps Script.");
+    console.log(err);
+  }
+
+  btn.disabled = false;
+  btn.innerText = "Enviar postulación";
+});
+
+async function cargarPostulantes(){
+  try{
+    const res = await fetch(GOOGLE_SCRIPT_URL);
+    postulantes = await res.json();
+    postulantes.sort((a,b)=>Number(b.puntaje)-Number(a.puntaje));
+    mostrarRanking();
+  }catch(e){
+    document.getElementById("ranking").innerHTML = "<p>No se pudo cargar la información.</p>";
+  }
+}
+
+function mostrarRanking(){
+  let html = "<table><tr><th>#</th><th>Nombre</th><th>Teléfono</th><th>Horario</th><th>Puntaje</th><th>Estado</th><th>Ver</th></tr>";
+  postulantes.forEach((p,i)=>{
+    const clase = Number(p.puntaje) >= 85 ? "good" : Number(p.puntaje) >= 50 ? "mid" : "bad";
+    html += `<tr>
+      <td>${i+1}</td>
+      <td>${escapeHTML(p.nombre)}</td>
+      <td>${escapeHTML(p.telefono)}</td>
+      <td>${escapeHTML(p.horario)}</td>
+      <td><b>${escapeHTML(p.puntaje)}</b></td>
+      <td><span class="badge ${clase}">${escapeHTML(p.estado)}</span></td>
+      <td><button class="secondary" onclick="verDetalle(${i})">Ver</button></td>
+    </tr>`;
+  });
+  html += "</table>";
+  document.getElementById("ranking").innerHTML = html;
+}
+
+function verDetalle(i){
+  const p = postulantes[i];
+  const d = document.getElementById("detalle");
+  d.style.display = "block";
+  d.innerHTML = `
+    <h2>${escapeHTML(p.nombre)}</h2>
+    <p><b>Teléfono:</b> ${escapeHTML(p.telefono)}</p>
+    <p><b>Edad:</b> ${escapeHTML(p.edad)}</p>
+    <p><b>Sector:</b> ${escapeHTML(p.sector)}</p>
+    <p><b>Horario:</b> ${escapeHTML(p.horario)}</p>
+    <p><b>Experiencia:</b> ${escapeHTML(p.experiencia)}</p>
+    <p><b>Puntaje:</b> ${escapeHTML(p.puntaje)}/100</p>
+    <p><b>Estado:</b> ${escapeHTML(p.estado)}</p>
+    <h3>Respuestas</h3>
+    <p><b>Cliente molesto:</b><br>${escapeHTML(p.p1)}</p>
+    <p><b>Honestidad:</b><br>${escapeHTML(p.p2)}</p>
+    <p><b>Prioridades:</b><br>${escapeHTML(p.p3)}</p>
+    <p><b>Responsabilidad:</b><br>${escapeHTML(p.p4)}</p>
+    <p><b>Venta:</b><br>${escapeHTML(p.p5)}</p>
+    <p><b>Aprendizaje:</b><br>${escapeHTML(p.p6)}</p>
+    <p><b>Matemática:</b><br>${escapeHTML(p.a1)}</p>
+    <p><b>Mensaje de venta:</b><br>${escapeHTML(p.a2)}</p>
+    <p><b>Alternativa:</b><br>${escapeHTML(p.a3)}</p>
+    <p><b>Orden:</b><br>${escapeHTML(p.a4)}</p>
+  `;
+  d.scrollIntoView({behavior:"smooth"});
+}
+
+function escapeHTML(t){
+  return String(t || "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+
+if(localStorage.getItem("adminGinita")==="true"){
+  document.getElementById("adminPanel").style.display = "block";
+  cargarPostulantes();
+}
+</script>
 </body>
 </html>
