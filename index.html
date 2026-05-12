@@ -306,11 +306,20 @@
 
     try{
       const postulante = crearPostulante();
+      const formData = new URLSearchParams();
+      Object.keys(postulante).forEach(key => {
+        if (typeof postulante[key] === "object") {
+          formData.append(key, JSON.stringify(postulante[key]));
+        } else {
+          formData.append(key, postulante[key]);
+        }
+      });
+
       await fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify(postulante)
+        headers: {"Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"},
+        body: formData.toString()
       });
 
       document.getElementById("resultado").style.display = "block";
