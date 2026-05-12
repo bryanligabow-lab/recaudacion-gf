@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema Inteligente de Selección - Ginita Fruits</title>
+  <style>
+    :root{
+      --green:#3c9f2f; --dark-green:#176b2c; --red:#e9282e;
+      --yellow:#fff4d6; --orange:#f59e0b;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#f8fff4,#fff);color:#111}
+    header{background:linear-gradient(135deg,var(--dark-green),var(--green));color:white;padding:28px 18px;text-align:center}
+    .logo{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:88px;height:88px;border-radius:50%;background:#fff;color:var(--dark-green);
+      font-weight:900;font-size:26px;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.2);
+      user-select:none;margin-bottom:12px;
+    }
+    header h1{margin:0;font-size:32px} header p{margin:8px 0 0}
+    .container{max-width:1150px;margin:auto;padding:22px}
+    .card{background:white;border-radius:18px;padding:22px;margin-bottom:20px;box-shadow:0 8px 25px rgba(0,0,0,.08);border:1px solid #e8e8e8}
+    h2{color:var(--dark-green);margin-top:0} h3{color:var(--red)}
+    label{font-weight:bold;display:block;margin-top:14px}
+    input,select,textarea{width:100%;padding:12px;margin-top:6px;border:1px solid #ccc;border-radius:10px;font-size:15px}
+    textarea{min-height:90px}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .question,.activity{padding:15px;border-radius:12px;background:#f7faf6;margin:12px 0;border-left:5px solid var(--green)}
+    .activity{background:#fffdf7;border-left-color:var(--orange)}
+    .score-row{display:grid;grid-template-columns:1fr 140px;gap:12px;align-items:center;margin-top:10px}
+    button{background:var(--red);color:white;border:0;padding:14px 20px;border-radius:12px;font-size:16px;font-weight:bold;cursor:pointer;margin:6px 6px 6px 0}
+    button.secondary{background:var(--dark-green)} button.light{background:#222}
+    .result{display:none;background:var(--yellow);border:2px solid #f0d27a;padding:18px;border-radius:14px;margin-top:18px}
+    .badge{display:inline-block;padding:8px 12px;border-radius:999px;color:white;font-weight:bold}
+    .approved{background:var(--green)} .review{background:#f0a000} .rejected{background:var(--red)}
+    table{width:100%;border-collapse:collapse;margin-top:10px} th,td{border:1px solid #ddd;padding:10px;text-align:left;vertical-align:top} th{background:var(--dark-green);color:white}
+    .small{font-size:13px;color:#555}.pill{display:inline-block;background:#eef8ee;color:#176b2c;border:1px solid #cbe8ca;border-radius:999px;padding:6px 10px;margin:3px;font-size:13px}
+    .admin-panel{display:none}
+    .login-box{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99;align-items:center;justify-content:center;padding:18px}
+    .login-card{background:white;max-width:420px;width:100%;padding:24px;border-radius:18px;box-shadow:0 15px 40px rgba(0,0,0,.25)}
+    .hidden-note{text-align:center;color:#666;font-size:13px;margin-top:10px}
+    @media(max-width:750px){.grid,.score-row{grid-template-columns:1fr}header h1{font-size:25px}}
+    @media print{button,.login-box{display:none}.card{box-shadow:none;border:1px solid #ccc}body{background:white}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo" id="logoAdmin" title="Ginita Fruits">GF</div>
+  <h1>Ginita Fruits</h1>
+  <p>Sistema inteligente de selección de personal para comisariato</p>
+  <div class="hidden-note">Panel administrativo oculto: 5 clics en el logo.</div>
+</header>
+
+<div class="login-box" id="loginBox">
+  <div class="login-card">
+    <h2>Ingreso de administrador</h2>
+    <label>Usuario</label>
+    <input id="adminUser" placeholder="Usuario">
+    <label>Contraseña</label>
+    <input id="adminPass" type="password" placeholder="Contraseña">
+    <button onclick="loginAdmin()">Entrar</button>
+    <button class="light" onclick="cerrarLogin()">Cancelar</button>
+    <p id="loginError" style="color:#e9282e;font-weight:bold;"></p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="card">
+    <h2>1. Datos del postulante</h2>
+    <div class="grid">
+      <div><label>Nombre completo</label><input id="nombre" placeholder="Ej: Juan Pérez"></div>
+      <div><label>Edad</label><input id="edad" type="number" placeholder="Ej: 19"></div>
+      <div><label>Teléfono</label><input id="telefono" placeholder="Ej: 0968429494"></div>
+      <div><label>Sector donde vive</label><input id="sector" placeholder="Ej: Centro, Norte, Sur"></div>
+      <div>
+        <label>Horario al que aplica</label>
+        <select id="horario">
+          <option>Tiempo completo: 8am - 9pm</option>
+          <option>Medio tiempo mañana: 8am - 2pm</option>
+          <option>Medio tiempo tarde: 2pm - 9pm</option>
+        </select>
+      </div>
+      <div>
+        <label>Experiencia previa</label>
+        <select id="experiencia">
+          <option>No tiene experiencia</option>
+          <option>Atención al cliente</option>
+          <option>Ventas</option>
+          <option>Comisariato / tienda</option>
+          <option>Caja / cobros</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>2. Preguntas de razonamiento y actitud</h2>
+    <p class="small">El postulante debe responder aquí mismo. La finalidad es medir inteligencia práctica, honestidad y criterio.</p>
+    <div class="question"><label>1. Un cliente está molesto porque compró una fruta dañada. ¿Qué harías paso a paso?</label><textarea id="p1"></textarea></div>
+    <div class="question"><label>2. Ves que un compañero se equivoca dando cambio y el cliente no se da cuenta. ¿Qué haces y por qué?</label><textarea id="p2"></textarea></div>
+    <div class="question"><label>3. El local está lleno, hay clientes esperando y faltan fundas. ¿Cómo organizas tus prioridades?</label><textarea id="p3"></textarea></div>
+    <div class="question"><label>4. Si tu jefe no está mirando, ¿qué cosas harías igual para demostrar responsabilidad?</label><textarea id="p4"></textarea></div>
+    <div class="question"><label>5. ¿Qué idea darías para vender más frutas o atender mejor a los clientes?</label><textarea id="p5"></textarea></div>
+  </div>
+
+  <div class="card">
+    <h2>3. Actividades prácticas para resolver aquí</h2>
+    <div class="activity">
+      <h3>Actividad 1: Matemática rápida</h3>
+      <p>Un cliente compra: $2.50 de tomate, $1.75 de cebolla, $3.25 de manzana y $4.50 de sandía. Paga con $20.</p>
+      <label>¿Cuánto debe recibir de cambio?</label><input id="a1" placeholder="Escribe tu respuesta">
+    </div>
+    <div class="activity">
+      <h3>Actividad 2: Orden de prioridades</h3>
+      <p>Estás solo por 10 minutos. Suceden estas 4 cosas al mismo tiempo: un cliente pide ayuda, hay agua en el piso, llega mercadería y suena el teléfono.</p>
+      <label>Ordena del 1 al 4 qué harías primero y explica por qué.</label><textarea id="a2"></textarea>
+    </div>
+    <div class="activity">
+      <h3>Actividad 3: Atención al cliente</h3>
+      <p>Escribe un mensaje corto para convencer a un cliente de comprar frutas frescas en Ginita Fruits.</p>
+      <label>Tu mensaje de venta:</label><textarea id="a3"></textarea>
+    </div>
+    <div class="activity">
+      <h3>Actividad 4: Honestidad</h3>
+      <p>Encuentras $10 en el piso cerca de la caja, pero nadie te vio.</p>
+      <label>¿Qué haces exactamente?</label><textarea id="a4"></textarea>
+    </div>
+    <div class="activity">
+      <h3>Actividad 5: Resolución de problemas</h3>
+      <p>Un cliente quiere llevar aguacates maduros para hoy, pero solo hay aguacates verdes.</p>
+      <label>¿Qué alternativa le ofreces?</label><textarea id="a5"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>4. Evaluación interna</h2>
+    <p class="small">Esta parte sirve para calificar al postulante. El ranking y los contactos solo se ven desde el panel de administrador.</p>
+    <div class="score-row"><label>Responsabilidad</label><input id="s1" type="number" min="0" max="10" value="0"></div>
+    <div class="score-row"><label>Honestidad</label><input id="s2" type="number" min="0" max="10" value="0"></div>
+    <div class="score-row"><label>Inteligencia práctica / razonamiento</label><input id="s3" type="number" min="0" max="10" value="0"></div>
+    <div class="score-row"><label>Atención al cliente</label><input id="s4" type="number" min="0" max="10" value="0"></div>
+    <div class="score-row"><label>Rapidez para resolver problemas</label><input id="s5" type="number" min="0" max="10" value="0"></div>
+    <div class="score-row"><label>Comunicación</label><input id="s6" type="number" min="0" max="10" value="0"></div>
+    <div class="score-row"><label>Orden y limpieza</label><input id="s7" type="number" min="0" max="10" value="0"></div>
+    <div class="score-row"><label>Actitud y energía</label><input id="s8" type="number" min="0" max="10" value="0"></div>
+    <label>Observaciones del evaluador</label>
+    <textarea id="observaciones" placeholder="Puntos fuertes, puntos débiles y recomendación."></textarea>
+
+    <button onclick="guardarPostulante()">Guardar postulación</button>
+    <button class="light" onclick="limpiar()">Limpiar formulario</button>
+
+    <div id="resultado" class="result">
+      <h2>Postulación guardada</h2>
+      <p>Gracias. La información fue registrada correctamente.</p>
+    </div>
+  </div>
+
+  <div class="card admin-panel" id="adminPanel">
+    <h2>Panel privado de administrador</h2>
+    <p><b>Solo Bryan puede ver esta información.</b></p>
+    <button class="secondary" onclick="mostrarRanking()">Actualizar ranking</button>
+    <button class="secondary" onclick="exportarCSV()">Exportar postulantes CSV</button>
+    <button class="light" onclick="cerrarAdmin()">Cerrar sesión</button>
+    <button class="light" onclick="borrarRanking()">Borrar ranking</button>
+    <div id="ranking"></div>
+    <div id="detallePostulante" class="result"></div>
+  </div>
+</div>
+
+<script>
+  const ADMIN_USER = "bryan";
+  const ADMIN_PASS = "2004";
+  let clickCount = 0;
+  let clickTimer = null;
+
+  document.getElementById("logoAdmin").addEventListener("click", () => {
+    clickCount++;
+    clearTimeout(clickTimer);
+    clickTimer = setTimeout(() => clickCount = 0, 1600);
+    if(clickCount >= 5){
+      clickCount = 0;
+      document.getElementById("loginBox").style.display = "flex";
+    }
+  });
+
+  function cerrarLogin(){
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("loginError").innerText = "";
+  }
+
+  function loginAdmin(){
+    const u = document.getElementById("adminUser").value.trim();
+    const p = document.getElementById("adminPass").value.trim();
+    if(u === ADMIN_USER && p === ADMIN_PASS){
+      localStorage.setItem("adminGinita", "true");
+      cerrarLogin();
+      document.getElementById("adminPanel").style.display = "block";
+      mostrarRanking();
+      document.getElementById("adminPanel").scrollIntoView({behavior:"smooth"});
+    } else {
+      document.getElementById("loginError").innerText = "Usuario o contraseña incorrectos.";
+    }
+  }
+
+  function cerrarAdmin(){
+    localStorage.removeItem("adminGinita");
+    document.getElementById("adminPanel").style.display = "none";
+  }
+
+  function calcularPuntaje(){
+    let total = 0;
+    for(let i=1;i<=8;i++){
+      let valor = Number(document.getElementById("s"+i).value);
+      if(valor < 0) valor = 0;
+      if(valor > 10) valor = 10;
+      total += valor;
+    }
+    return Math.round((total / 80) * 100);
+  }
+
+  function obtenerEstado(puntaje){
+    if(puntaje >= 85) return "CONTACTAR PRIMERO";
+    if(puntaje >= 70) return "BUENA OPCIÓN";
+    if(puntaje >= 50) return "REVISAR";
+    return "NO RECOMENDADO";
+  }
+
+  function guardarPostulante(){
+    const puntaje = calcularPuntaje();
+    const postulante = {
+      nombre: document.getElementById("nombre").value || "Sin nombre",
+      edad: document.getElementById("edad").value || "",
+      telefono: document.getElementById("telefono").value || "Sin teléfono",
+      sector: document.getElementById("sector").value || "",
+      horario: document.getElementById("horario").value,
+      experiencia: document.getElementById("experiencia").value,
+      p1: document.getElementById("p1").value,
+      p2: document.getElementById("p2").value,
+      p3: document.getElementById("p3").value,
+      p4: document.getElementById("p4").value,
+      p5: document.getElementById("p5").value,
+      a1: document.getElementById("a1").value,
+      a2: document.getElementById("a2").value,
+      a3: document.getElementById("a3").value,
+      a4: document.getElementById("a4").value,
+      a5: document.getElementById("a5").value,
+      observaciones: document.getElementById("observaciones").value,
+      puntaje: puntaje,
+      estado: obtenerEstado(puntaje),
+      fecha: new Date().toLocaleString()
+    };
+
+    let ranking = JSON.parse(localStorage.getItem("rankingGinita") || "[]");
+    ranking.push(postulante);
+    ranking.sort((a,b)=>b.puntaje-a.puntaje);
+    localStorage.setItem("rankingGinita", JSON.stringify(ranking));
+
+    document.getElementById("resultado").style.display = "block";
+    document.getElementById("resultado").scrollIntoView({behavior:"smooth"});
+  }
+
+  function mostrarRanking(){
+    if(localStorage.getItem("adminGinita") !== "true") return;
+
+    let ranking = JSON.parse(localStorage.getItem("rankingGinita") || "[]");
+    let div = document.getElementById("ranking");
+
+    if(ranking.length === 0){
+      div.innerHTML = "<p>No hay postulantes guardados todavía.</p>";
+      return;
+    }
+
+    let html = "<table><tr><th>#</th><th>Nombre</th><th>Teléfono</th><th>Horario</th><th>Puntaje</th><th>Estado</th><th>Acción</th></tr>";
+    ranking.forEach((p,i)=>{
+      html += `<tr>
+        <td>${i+1}</td>
+        <td>${escapeHTML(p.nombre)}</td>
+        <td>${escapeHTML(p.telefono)}</td>
+        <td>${escapeHTML(p.horario)}</td>
+        <td><b>${p.puntaje}</b></td>
+        <td>${escapeHTML(p.estado)}</td>
+        <td><button class="secondary" onclick="verDetalle(${i})">Ver información</button></td>
+      </tr>`;
+    });
+    html += "</table>";
+    div.innerHTML = html;
+  }
+
+  function verDetalle(i){
+    let ranking = JSON.parse(localStorage.getItem("rankingGinita") || "[]");
+    let p = ranking[i];
+    let div = document.getElementById("detallePostulante");
+    div.style.display = "block";
+    div.innerHTML = `
+      <h2>Información completa del postulante</h2>
+      <p><b>Nombre:</b> ${escapeHTML(p.nombre)}</p>
+      <p><b>Edad:</b> ${escapeHTML(p.edad)}</p>
+      <p><b>Teléfono:</b> ${escapeHTML(p.telefono)}</p>
+      <p><b>Sector:</b> ${escapeHTML(p.sector)}</p>
+      <p><b>Horario:</b> ${escapeHTML(p.horario)}</p>
+      <p><b>Experiencia:</b> ${escapeHTML(p.experiencia)}</p>
+      <p><b>Puntaje:</b> ${p.puntaje}/100</p>
+      <p><b>Estado:</b> ${escapeHTML(p.estado)}</p>
+      <p><b>Fecha:</b> ${escapeHTML(p.fecha)}</p>
+      <h3>Respuestas de razonamiento</h3>
+      <p><b>Cliente molesto:</b><br>${escapeHTML(p.p1)}</p>
+      <p><b>Error en cambio:</b><br>${escapeHTML(p.p2)}</p>
+      <p><b>Prioridades:</b><br>${escapeHTML(p.p3)}</p>
+      <p><b>Responsabilidad:</b><br>${escapeHTML(p.p4)}</p>
+      <p><b>Idea para vender más:</b><br>${escapeHTML(p.p5)}</p>
+      <h3>Actividades prácticas</h3>
+      <p><b>Matemática rápida:</b><br>${escapeHTML(p.a1)}</p>
+      <p><b>Orden de prioridades:</b><br>${escapeHTML(p.a2)}</p>
+      <p><b>Mensaje de venta:</b><br>${escapeHTML(p.a3)}</p>
+      <p><b>Honestidad:</b><br>${escapeHTML(p.a4)}</p>
+      <p><b>Resolución de problemas:</b><br>${escapeHTML(p.a5)}</p>
+      <h3>Observaciones del evaluador</h3>
+      <p>${escapeHTML(p.observaciones)}</p>
+    `;
+    div.scrollIntoView({behavior:"smooth"});
+  }
+
+  function borrarRanking(){
+    if(confirm("¿Seguro que deseas borrar todo el ranking?")){
+      localStorage.removeItem("rankingGinita");
+      mostrarRanking();
+      document.getElementById("detallePostulante").style.display = "none";
+    }
+  }
+
+  function limpiar(){
+    document.querySelectorAll("input, textarea").forEach(input => {
+      if(input.type === "number") input.value = 0;
+      else input.value = "";
+    });
+    document.getElementById("resultado").style.display = "none";
+  }
+
+  function exportarCSV(){
+    let ranking = JSON.parse(localStorage.getItem("rankingGinita") || "[]");
+    if(ranking.length === 0){ alert("No hay postulantes para exportar."); return; }
+
+    const encabezados = ["Nombre","Edad","Telefono","Sector","Horario","Experiencia","Puntaje","Estado","Fecha","Observaciones"];
+    const filas = ranking.map(p => [
+      p.nombre,p.edad,p.telefono,p.sector,p.horario,p.experiencia,p.puntaje,p.estado,p.fecha,p.observaciones
+    ]);
+
+    let csv = [encabezados, ...filas].map(row => row.map(c => `"${String(c || "").replaceAll('"','""')}"`).join(",")).join("\n");
+    let blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement("a");
+    a.href = url;
+    a.download = "postulantes_ginita_fruits.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function escapeHTML(text){
+    return String(text || "").replace(/[&<>"']/g, function(m){
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'})[m];
+    });
+  }
+
+  if(localStorage.getItem("adminGinita") === "true"){
+    document.getElementById("adminPanel").style.display = "block";
+    mostrarRanking();
+  }
+</script>
+</body>
+</html>
